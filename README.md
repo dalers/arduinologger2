@@ -3,7 +3,7 @@ Arduinologger2
 
 Arduinologger is a datalogger for I2C sensor devices.
 
-Arduinologger2 is developed as an open source project and uses the permissive business-friendly [BSD 2-Clause License](http://opensource.org/licenses/BSD-2-Clause) for maximum flexibility of use to the Maestro community. The goal of the Maestro project is to provide a superior integrated business management solution to small-to-medium enterprises (SME) for managing parts, projects, material, issues and people.
+Arduinologger2 is developed as an open source project and uses the permissive business-friendly [BSD 2-Clause License](http://opensource.org/licenses/BSD-2-Clause) for maximum flexibility of use to the Arduinologger2 community. The goal of the project is to create a superior high-speed multi-sensor data logger.
 
 Getting Started
 ---------------
