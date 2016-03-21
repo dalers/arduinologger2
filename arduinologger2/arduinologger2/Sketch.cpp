@@ -1,18 +1,27 @@
+﻿/*Begining of Auto generated code by Atmel studio */
+#include <Arduino.h>
+
+/*End of auto generated code by Atmel studio */
+
 // (c) 2016 by Dale Scott.
 // Provided according to the 2-clause BSD License.
 // https://opensource.org/licenses/BSD-2-Clause
 
-// Gets field measurement from I2C TLV493D using Wire library
+// Gets measurement from I2C TLV493D using Wire library
 
 #include <Wire.h>
 #include <SoftwareSerial.h>
+//Beginning of Auto generated function prototypes by Atmel Studio
+//End of Auto generated function prototypes by Atmel Studio
+
+
 
 // TLV_ADDRESS1 0x5E (decimal 94) (ADDR=1)
 // TLV_ADDRESS2 0x1F (decimal 31) (ADDR=0)
 
 bool led = false;                 // state of Arduino LED ("L", "pin 13")
 
-// TLV493 I2C read registers
+// TLV493 I2C register read values
 int byte0 = 0;                    // Bx value MSB's
 int byte1 = 0;                    // By value MSB's
 int byte2 = 0;                    // Bz value MSB's
@@ -26,13 +35,13 @@ int byte9 = 0;                    // Factory settings
 
 void setup() {
   // initialize digital pin 13 as an output (LED "L")
-  // TODO: it seems this is "pin 13" of the original digital
+  // TODO it seems this is "pin 13" of the original digital
   //  Arduino interface or some such thing. The OSEPP schematic
   //  connector pin has a "13" beside it. The signal is pin 17
   //  on the mpu symbol ("PB5(SCK)") and is called "PB5 (SCK/PCINT5)"
   //  in the ATmega328 datasheet).
   //
-  // So, how exactly does pinMode work?
+  // So, how /exactly/ does pinMode work?
   pinMode(13, OUTPUT);
 
   Wire.begin();                   // join i2c bus (address optional for master)
@@ -54,18 +63,18 @@ void setup() {
   }
 
   // output initial TLV493D register values
-  Serial.println("TLV493D Registers");
-  Serial.println(byte0);
-  Serial.println(byte1);
-  Serial.println(byte2);
-  Serial.println(byte3);
-  Serial.println(byte4);
-  Serial.println(byte5);
-  Serial.println(byte6);
-  Serial.println(byte7);
-  Serial.println(byte8);
-  Serial.println(byte9);
-  Serial.println("");
+//  Serial.println("TLV493D Registers");
+//  Serial.println(byte0);
+//  Serial.println(byte1);
+//  Serial.println(byte2);
+//  Serial.println(byte3);
+//  Serial.println(byte4);
+//  Serial.println(byte5);
+//  Serial.println(byte6);
+//  Serial.println(byte7);
+//  Serial.println(byte8);
+//  Serial.println(byte9);
+//  Serial.println("");
 
   // configure TLV493D into master-controlled mode
   Wire.beginTransmission(94);   // write to I2C TLV493 (default ADDR=1)
@@ -74,10 +83,13 @@ void setup() {
   Wire.write(byte(0x00));       // config byte 2
   Wire.write(byte(0x00));       // config byte 3
   Wire.endTransmission();       // stop transmitting
+
+  // output header for values to come
+  Serial.println("TLV493D Bx, By, Bz (MSB's)");
 }
 
 void loop() {
-  // toggle LED On/Off each pass through loop
+  // toggle LED On if Off, or vice versa
   if (led) {  // if On, turn Off
     led = false;
     digitalWrite(13, LOW);
@@ -101,11 +113,12 @@ void loop() {
     byte9  = Wire.read();         // Factory settings (store for mode command)
   }
 
-  Serial.println("TLV493D Bx, By, Bz (MSB's)");
-  Serial.println(byte0);
-  Serial.println(byte1);
-  Serial.println(byte2);
-  Serial.println("");
+  // output Bx, By, Bz
+  // TODO output time? temperature?
+  Serial.println(byte0); // Bx
+  //Serial.println(byte1); // By
+  //Serial.println(byte2); // Bz
+  //Serial.println("");
 
   delay(250);                     // sample and LED blink rate
 }
