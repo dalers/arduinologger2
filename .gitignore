@@ -1,0 +1,13 @@
+#################
+## Atmel Studio 7
+## https://github.com/elcojacobs/arduino-atmel-studio-example/blob/master/.gitignore
+## http://www.avrfreaks.net/forum/necessary-files
+#################
+
+# Current environment
+.vs/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+
