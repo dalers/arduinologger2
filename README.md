@@ -1,13 +1,13 @@
 Arduinologger2
 =======
-
-Arduinologger2 is an Arduino-based datalogger for I2C sensor devices.
+Arduinologger2 is an Arduino-based datalogger for I2C sensors.
 
 Arduinologger2 is developed as an open source project and uses the permissive business-friendly [BSD 2-Clause License](http://opensource.org/licenses/BSD-2-Clause) for maximum flexibility of use to the Arduinologger2 community. The goal of the project is to create a superior high-speed multi-sensor data logger.
 
 Getting Started
 ---------------
-TBD
+1. Arduino UNO R3 (tested on an OSEPP Uno R3 Plus with FTDI USB interface).
+2. Atmel Studio 7 (AS7). Initially developed using Arduino IDE 1.6.8/1.7.8, arduinologger2 is now an AS7 solution (it was converted by AS7 using Arduino IDE 1.7.8).
 
 Issue Tracking
 --------------

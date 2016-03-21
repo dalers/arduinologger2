@@ -1,20 +1,18 @@
-﻿/*Begining of Auto generated code by Atmel studio */
-#include <Arduino.h>
-
-/*End of auto generated code by Atmel studio */
-
-// (c) 2016 by Dale Scott.
+﻿// (c) 2016 by Dale Scott.
+// (c) 2016 by Steve Pye.
 // Provided according to the 2-clause BSD License.
 // https://opensource.org/licenses/BSD-2-Clause
 
 // Gets measurement from I2C TLV493D using Wire library
 
+/*Beginning of Auto generated code by Atmel studio */
+#include <Arduino.h>
+/*End of auto generated code by Atmel studio */
+
 #include <Wire.h>
 #include <SoftwareSerial.h>
 //Beginning of Auto generated function prototypes by Atmel Studio
 //End of Auto generated function prototypes by Atmel Studio
-
-
 
 // TLV_ADDRESS1 0x5E (decimal 94) (ADDR=1)
 // TLV_ADDRESS2 0x1F (decimal 31) (ADDR=0)
@@ -33,6 +31,12 @@ int byte7 = 0;                    // Factory settings
 int byte8 = 0;                    // Factory settings
 int byte9 = 0;                    // Factory settings
 
+// sensor values
+int bx = 0;
+int by = 0;
+int bz = 0;
+int temp = 0;
+
 void setup() {
   // initialize digital pin 13 as an output (LED "L")
   // TODO it seems this is "pin 13" of the original digital
@@ -47,7 +51,7 @@ void setup() {
   Wire.begin();                   // join i2c bus (address optional for master)
   Serial.begin(9600);             // start serial 9600bps for output
 
-  // read register map for factory settings
+  // read register map to get factory settings
   Wire.requestFrom(94, 10);       // request 10 bytes (all registers) from I2C Device 94 (TLV493 default ADDR=1)
   if (10 <= Wire.available()) {   // if ten bytes were received
     byte0  = Wire.read();         // Bx value MSB's
@@ -62,19 +66,8 @@ void setup() {
     byte9  = Wire.read();         // Factory settings (store for mode command)
   }
 
-  // output initial TLV493D register values
-//  Serial.println("TLV493D Registers");
-//  Serial.println(byte0);
-//  Serial.println(byte1);
-//  Serial.println(byte2);
-//  Serial.println(byte3);
-//  Serial.println(byte4);
-//  Serial.println(byte5);
-//  Serial.println(byte6);
-//  Serial.println(byte7);
-//  Serial.println(byte8);
-//  Serial.println(byte9);
-//  Serial.println("");
+  // output registers as initially set before configuring mode
+  Serial.print(byte0, BIN); Serial.print("\t"); Serial.print(byte1, BIN); Serial.print("\t"); Serial.print(byte2, BIN); Serial.print("\t"); Serial.print(byte3, BIN); Serial.print("\t"); Serial.print(byte4, BIN); Serial.print("\t"); Serial.print(byte5, BIN); Serial.print("\t"); Serial.print(byte6, BIN); Serial.print("\t"); Serial.print(byte7, BIN); Serial.print("\t"); Serial.print(byte8, BIN); Serial.print("\t"); Serial.println(byte9, BIN);
 
   // configure TLV493D into master-controlled mode
   Wire.beginTransmission(94);   // write to I2C TLV493 (default ADDR=1)
@@ -113,12 +106,20 @@ void loop() {
     byte9  = Wire.read();         // Factory settings (store for mode command)
   }
 
-  // output Bx, By, Bz
-  // TODO output time? temperature?
-  Serial.println(byte0); // Bx
-  //Serial.println(byte1); // By
-  //Serial.println(byte2); // Bz
-  //Serial.println("");
+  // reassemble sensor values
+  //bx = byte0;
+  bx = ((uint16_t)byte0 << 4) | (byte4 & 0x0F);
+  //by = byte1;
+  by = ((uint16_t)byte1 << 4) | (byte4 >> 4);
+  //bz = byte2;
+  bz = ((uint16_t)byte2 << 4) | (byte5 & 0x0F);
+  //temp = byte3;
+  temp = (((uint16_t)byte3 << 4) & 0xF0) | byte6;
+
+  // output Bx, By, Bz, temperature
+  // TODO output time?
+  Serial.print(byte0, BIN); Serial.print("\t"); Serial.print(byte1, BIN); Serial.print("\t"); Serial.print(byte2, BIN); Serial.print("\t"); Serial.print(byte3, BIN); Serial.print("\t"); Serial.print(byte4, BIN); Serial.print("\t"); Serial.print(byte5, BIN); Serial.print("\t"); Serial.print(byte6, BIN); Serial.print("\t"); Serial.print(byte7, BIN); Serial.print("\t"); Serial.print(byte8, BIN); Serial.print("\t"); Serial.println(byte9, BIN);
+  //Serial.print(bx, BIN); Serial.print("\t"); Serial.print(by, BIN); Serial.print("\t"); Serial.print(bz, BIN); Serial.print("\t"); Serial.println(temp, BIN);
 
   delay(250);                     // sample and LED blink rate
 }
