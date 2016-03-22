@@ -114,10 +114,17 @@ void setup() {
 	}
 
 	// output header for values
-	Serial.print("Sample"); Serial.print("\t"); Serial.print("Byte0   "); Serial.print("\t"); Serial.print("Byte1   "); Serial.print("\t"); Serial.print("Byte2   "); Serial.print("\t"); Serial.print("Byte3   "); Serial.print("\t"); Serial.print("Byte4   "); Serial.print("\t"); Serial.print("Byte5   "); Serial.print("\t"); Serial.print("Byte6   "); Serial.print("\t"); Serial.print("Byte7   "); Serial.print("\t"); Serial.print("Byte8   "); Serial.print("\t"); Serial.print("Byte9   "); Serial.print("\t"); Serial.print("Bx     "); Serial.print("\t"); Serial.print("By     "); Serial.print("\t"); Serial.print("Bz     "); Serial.print("\t"); Serial.print("Temp   "); Serial.println("");
+	Serial.print("Sample"); Serial.print("\t"); Serial.print("Byte0   "); Serial.print("\t"); Serial.print("Byte1   "); Serial.print("\t");
+		Serial.print("Byte2   "); Serial.print("\t"); Serial.print("Byte3   "); Serial.print("\t"); Serial.print("Byte4   "); Serial.print("\t");
+		Serial.print("Byte5   "); Serial.print("\t"); Serial.print("Byte6   "); Serial.print("\t"); Serial.print("Byte7   "); Serial.print("\t");
+		Serial.print("Byte8   "); Serial.print("\t"); Serial.print("Byte9   "); Serial.print("\t"); Serial.print("Bx     "); Serial.print("\t");
+		Serial.print("By     "); Serial.print("\t"); Serial.print("Bz     "); Serial.print("\t"); Serial.print("Temp   "); Serial.println("");
 
 	// output registers as initially set before configuring
-	Serial.print("00000\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t"); print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t"); print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t"); print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.println("");
+	Serial.print("00000\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
+		print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
+		print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
+		print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.println("");
 
 	// configure TLV493D into master-controlled mode
 	Wire.beginTransmission(94);		// write to I2C TLV493 (default ADDR=1)
@@ -166,10 +173,11 @@ void loop() {
 
 	// output Bx, By, Bz, temperature
 	// TODO output time?
-	print_decimal(sample); Serial.print("\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t"); print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t"); print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t"); print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.print("\t"); Serial.print(bx, DEC); Serial.print("\t"); Serial.print(by, DEC); Serial.print("\t"); Serial.print(bz, DEC); Serial.print("\t"); Serial.print(temp, DEC); Serial.println("");
-	//print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t"); print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t"); print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t"); print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.println("");
-	//Serial.print(byte0, BIN); Serial.print("\t"); Serial.print(byte1, BIN); Serial.print("\t"); Serial.print(byte2, BIN); Serial.print("\t"); Serial.print(byte3, BIN); Serial.print("\t"); Serial.print(byte4, BIN); Serial.print("\t"); Serial.print(byte5, BIN); Serial.print("\t"); Serial.print(byte6, BIN); Serial.print("\t"); Serial.print(byte7, BIN); Serial.print("\t"); Serial.print(byte8, BIN); Serial.print("\t"); Serial.println(byte9, BIN);
-	//Serial.print(bx, BIN); Serial.print("\t"); Serial.print(by, BIN); Serial.print("\t"); Serial.print(bz, BIN); Serial.print("\t"); Serial.println(temp, BIN);
+	print_decimal(sample); Serial.print("\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
+		print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
+		print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
+		print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.print("\t"); Serial.print(bx, DEC); Serial.print("\t");
+		Serial.print(by, DEC); Serial.print("\t"); Serial.print(bz, DEC); Serial.print("\t"); Serial.print(temp, DEC); Serial.println("");
 
 	delay(250);						// sample and LED blink rate
 }
