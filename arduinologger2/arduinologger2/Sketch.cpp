@@ -21,22 +21,23 @@ bool led = false;					// state of Arduino LED ("L", "pin 13")
 int sample = 0;						// sample counter
 
 // TLV493 I2C register read values
-int byte0 = 0;						// Bx value MSB's
-int byte1 = 0;						// By value MSB's
-int byte2 = 0;						// Bz value MSB's
-int byte3 = 0;						// Selected channel, frame counter, temperature MSB's
-int byte4 = 0;						// By, Bx LSB's
-int byte5 = 0;						// Bz LSB's, PD flag
-int byte6 = 0;						// Temperature LSB's
-int byte7 = 0;						// Factory settings
-int byte8 = 0;						// Factory settings
-int byte9 = 0;						// Factory settings
+byte byte0 = 0;						// Bx value MSB's
+byte byte1 = 0;						// By value MSB's
+byte byte2 = 0;						// Bz value MSB's
+byte byte3 = 0;						// Selected channel, frame counter, temperature MSB's
+byte byte4 = 0;						// By, Bx LSB's
+byte byte5 = 0;						// Bz LSB's, PD flag
+byte byte6 = 0;						// Temperature LSB's
+byte byte7 = 0;						// Factory settings
+byte byte8 = 0;						// Factory settings
+byte byte9 = 0;						// Factory settings
 
 // sensor values
 int bx = 0;
 int by = 0;
 int bz = 0;
-int temp = 0;
+int temp_i = 0;
+int temp_f = 0;
 
 // PRINT_BINARY - Arduino
 // Prints a positive integer in binary format with a fixed width
@@ -72,7 +73,7 @@ void print_binary(int v, int num_places)
 	}
 }
 
-// PRINT_DECIMAL - Arduino
+// PRINT_DECIMAL
 // Prints a positive integer with leading zero's in 5-digit field
 void print_decimal(int v)
 {
@@ -168,8 +169,16 @@ void loop() {
 	by = ((uint16_t)byte1 << 4) | (byte4 >> 4);
 	//bz = byte2;
 	bz = ((uint16_t)byte2 << 4) | (byte5 & 0x0F);
+
 	//temp = byte3;
-	temp = (((uint16_t)byte3 << 4) & 0xF0) | byte6;
+	//temp = (((uint16_t)byte3 << 4) & 0xF0) | byte6;
+	temp_i = ((int)byte3 << 4) | (int)byte6;
+	// extend sign if 12-bit negative
+	//if ((temp_i & 0x0800) != 0) {
+		//(temp_i = 0xF000 | temp_i);
+	//}
+	//temp_f = ((float)temp_i * 1.1) - (340. * 1.1) + 25.0;
+	temp_f = 99.999;
 
 	// output Bx, By, Bz, temperature
 	// TODO output time?
@@ -177,7 +186,8 @@ void loop() {
 		print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
 		print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
 		print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.print("\t"); Serial.print(bx, DEC); Serial.print("\t");
-		Serial.print(by, DEC); Serial.print("\t"); Serial.print(bz, DEC); Serial.print("\t"); Serial.print(temp, DEC); Serial.println("");
+		Serial.print(by, DEC); Serial.print("\t"); Serial.print(bz, DEC); Serial.print("\t"); Serial.print(temp_i, DEC); Serial.print("\t");
+		Serial.print(temp_f, 4); Serial.println("");
 
 	delay(250);						// sample and LED blink rate
 }
