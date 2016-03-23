@@ -84,16 +84,62 @@ void print_decimal(int v)
 	Serial.print(v);
 }
 
+// PRINT_VCD_HEADER
+// Prints header for VCD format output
+void print_vcd_header()
+{
+	Serial.println("$comment ReadOut Mode: Master Controlled $end");
+	Serial.println("$date 2016-00-00T00:00:00 $end");
+	Serial.println("$version 0.0.0 $end");
+	Serial.println("$timescale 1s $end");
+	Serial.println("");
+	Serial.println("$scope module top $end");
+	Serial.println("");
+	Serial.println("$var real 12 ! Bx $end");
+	Serial.println("$var real 12 @ By $end");
+	Serial.println("$var real 12 # Bz $end");
+	Serial.println("$upscope $end");
+	Serial.println("$enddefinitions $end");
+	Serial.println("");
+	Serial.println("$dumpvars");
+}
+
+// PRINT_VCD_RECORD
+// Prints sensor sample in VCD format
+void print_vcd(int sample, int bx, int by, int bz, float temp_f)
+{
+	Serial.print("#"); Serial.println(sample);
+	Serial.print("r"); Serial.print(bx); Serial.println(" !");
+	Serial.print("r"); Serial.print(by); Serial.println(" @");
+	Serial.print("r"); Serial.print(bz); Serial.println(" #");
+}
+
+// PRINT_VCD_FOOTER
+// Prints closing footer for VCD format output
+void print_vcd_footer()
+{
+	Serial.println("");
+	Serial.println("$end");
+}
+
+// SIGN_EXTEND 12-BIT
+// Extends sign from 12-bit two's complement to integer (16-bit)
+int signExtend(int i)
+{
+	if (( i & 0x0800) != 0)
+	{
+		return i | 0xF000;
+	}
+	
+	return i;
+}
+
 void setup() {
-	// initialize digital pin 13 as an output (LED "L")
-	//	TODO it seems this is "pin 13" of the original digital
-	//	Arduino interface or some such thing. The OSEPP schematic
-	//	connector pin has a "13" beside it. The signal is pin 17
-	//	on the mpu symbol ("PB5(SCK)") and is called "PB5 (SCK/PCINT5)"
-	//	in the ATmega328 datasheet).
-	//
-	//	So, how /exactly/ does pinMode work?
-	//
+	// initialize Arduino module digital pin 13 as an output (LED "L")
+	//	The connector pin symbol on the OSEPP schematic has a "13" beside
+	//	for identification. This signal is also pin 17 of the ATMega328P
+	//	("PB5(SCK)" on the OSEPP Arduino Uno R3 Plus schematic, and
+	//	"PB5 (SCK/PCINT5)" in the ATmega328 datasheet).
 	pinMode(13, OUTPUT);
 
 	Wire.begin();					// join i2c bus (address optional for master)
@@ -115,17 +161,19 @@ void setup() {
 	}
 
 	// output header for values
-	Serial.print("Sample"); Serial.print("\t"); Serial.print("Byte0   "); Serial.print("\t"); Serial.print("Byte1   "); Serial.print("\t");
-		Serial.print("Byte2   "); Serial.print("\t"); Serial.print("Byte3   "); Serial.print("\t"); Serial.print("Byte4   "); Serial.print("\t");
-		Serial.print("Byte5   "); Serial.print("\t"); Serial.print("Byte6   "); Serial.print("\t"); Serial.print("Byte7   "); Serial.print("\t");
-		Serial.print("Byte8   "); Serial.print("\t"); Serial.print("Byte9   "); Serial.print("\t"); Serial.print("Bx     "); Serial.print("\t");
-		Serial.print("By     "); Serial.print("\t"); Serial.print("Bz     "); Serial.print("\t"); Serial.print("Temp   "); Serial.println("");
+	print_vcd_header();
+	//Serial.print("Sample"); Serial.print("\t"); Serial.print("Byte0   "); Serial.print("\t"); Serial.print("Byte1   "); Serial.print("\t");
+		//Serial.print("Byte2   "); Serial.print("\t"); Serial.print("Byte3   "); Serial.print("\t"); Serial.print("Byte4   "); Serial.print("\t");
+		//Serial.print("Byte5   "); Serial.print("\t"); Serial.print("Byte6   "); Serial.print("\t"); Serial.print("Byte7   "); Serial.print("\t");
+		//Serial.print("Byte8   "); Serial.print("\t"); Serial.print("Byte9   "); Serial.println("");
+	//Serial.print("Sample"); Serial.print("\t"); Serial.print("Bx     "); Serial.print("\t");
+		//Serial.print("By     "); Serial.print("\t"); Serial.print("Bz     "); Serial.print("\t"); Serial.print("Temp   "); Serial.println("");
 
-	// output registers as initially set before configuring
-	Serial.print("00000\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
-		print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
-		print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
-		print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.println("");
+	// output initial value of TLV493D registers before configuring
+	//Serial.print("00000\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
+		//print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
+		//print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
+		//print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.println("");
 
 	// configure TLV493D into master-controlled mode
 	Wire.beginTransmission(94);		// write to I2C TLV493 (default ADDR=1)
@@ -146,7 +194,7 @@ void loop() {
 		digitalWrite(13, HIGH);
 	}
 
-	// get measurement from TLV493D
+	// get measurement sample from TLV493D
 	Wire.requestFrom(94, 10);		// request 10 bytes (all registers) from I2C Device 94 (TLV493 default ADDR=1)
 	if (10 <= Wire.available()) {	// if ten bytes were received
 		byte0  = Wire.read();		// Bx value MSB's
@@ -162,32 +210,28 @@ void loop() {
 	}
 	sample = sample + 1;			// increment sample counter
 	
-	// reassemble sensor values
-	//bx = byte0;
-	bx = ((uint16_t)byte0 << 4) | (byte4 & 0x0F);
-	//by = byte1;
-	by = ((uint16_t)byte1 << 4) | (byte4 >> 4);
-	//bz = byte2;
-	bz = ((uint16_t)byte2 << 4) | (byte5 & 0x0F);
+	// reassemble 12-bit two's-complement Bx, By, Bz (-2048 to + 2047) as int's
+	bx = ((int)byte0 << 4) | (byte4 & 0x0F);
+	bx = signExtend(bx);
 
-	//temp = byte3;
-	//temp = (((uint16_t)byte3 << 4) & 0xF0) | byte6;
-	temp_i = ((int)byte3 << 4) | (int)byte6;
-	// extend sign if 12-bit negative
-	//if ((temp_i & 0x0800) != 0) {
-		//(temp_i = 0xF000 | temp_i);
-	//}
-	//temp_f = ((float)temp_i * 1.1) - (340. * 1.1) + 25.0;
-	temp_f = 99.999;
+	by = ((int)byte1 << 4) | (byte4 >> 4);
+	by = signExtend(by);
 
-	// output Bx, By, Bz, temperature
-	// TODO output time?
-	print_decimal(sample); Serial.print("\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
-		print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
-		print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
-		print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8); Serial.print("\t"); Serial.print(bx, DEC); Serial.print("\t");
-		Serial.print(by, DEC); Serial.print("\t"); Serial.print(bz, DEC); Serial.print("\t"); Serial.print(temp_i, DEC); Serial.print("\t");
-		Serial.print(temp_f, 4); Serial.println("");
+	bz = ((int)byte2 << 4) | (byte5 & 0x0F);
+	bz = signExtend(bz);
+
+	// temperature
+	temp_i = ((int)(byte3 & 0xF0) << 4) | byte6;
+	temp_f = ((float)temp_i * 1.1) - (340. * 1.1) + 25.0;
+
+	// output sample data
+	print_vcd(sample, bx, by, bz, temp_f);
+	//print_decimal(sample); Serial.print("\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
+		//print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
+		//print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
+		//print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8);Serial.println("");
+	//print_decimal(sample); Serial.print("\t"); Serial.print(bx, DEC); Serial.print("\t"); Serial.print(by, DEC); Serial.print("\t");
+		//Serial.print(bz, DEC); Serial.print("\t"); Serial.print(temp_f, 4); Serial.println("");	
 
 	delay(250);						// sample and LED blink rate
 }
