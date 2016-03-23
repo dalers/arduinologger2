@@ -37,7 +37,7 @@ int bx = 0;
 int by = 0;
 int bz = 0;
 int temp_i = 0;
-int temp_f = 0;
+float temp_f = 0;
 
 // PRINT_BINARY - Arduino
 // Prints a positive integer in binary format with a fixed width
