@@ -6,8 +6,8 @@ Arduinologger2 is developed as an open source project and uses the permissive bu
 
 Getting Started
 ---------------
-1. Arduino UNO R3 (tested on an OSEPP Uno R3 Plus with FTDI USB interface).
-2. Atmel Studio 7 (AS7). Initially developed using Arduino IDE 1.6.8/1.7.8, arduinologger2 is now an AS7 solution (it was converted by AS7 using Arduino IDE 1.7.8).
+1. Arduino UNO R3
+2. Atmel Studio 7 ("AS7"). Arduinologger2 was initially created as an Arduino Sketch, but it has been migrated to an AS7 solution.
 
 Issue Tracking
 --------------
