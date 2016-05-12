@@ -33,11 +33,11 @@ byte byte8 = 0;						// Factory settings
 byte byte9 = 0;						// Factory settings
 
 // sensor values
-int bx = 0;
-int by = 0;
-int bz = 0;
-int temp_i = 0;
-float temp_f = 0;
+int bx = 0; float bx_f = 0;
+int by = 0; float by_f = 0;
+int bz = 0; float bz_f = 0;
+int temp_i = 0; float temp_f = 0;
+
 
 // PRINT_BINARY - Arduino
 // Prints a positive integer in binary format with a fixed width
@@ -161,13 +161,15 @@ void setup() {
 	}
 
 	// output header for values
-	print_vcd_header();
+	//print_vcd_header();
 	//Serial.print("Sample"); Serial.print("\t"); Serial.print("Byte0   "); Serial.print("\t"); Serial.print("Byte1   "); Serial.print("\t");
 		//Serial.print("Byte2   "); Serial.print("\t"); Serial.print("Byte3   "); Serial.print("\t"); Serial.print("Byte4   "); Serial.print("\t");
 		//Serial.print("Byte5   "); Serial.print("\t"); Serial.print("Byte6   "); Serial.print("\t"); Serial.print("Byte7   "); Serial.print("\t");
 		//Serial.print("Byte8   "); Serial.print("\t"); Serial.print("Byte9   "); Serial.println("");
 	//Serial.print("Sample"); Serial.print("\t"); Serial.print("Bx     "); Serial.print("\t");
 		//Serial.print("By     "); Serial.print("\t"); Serial.print("Bz     "); Serial.print("\t"); Serial.print("Temp   "); Serial.println("");
+	Serial.print("Sample"); Serial.print(","); Serial.print("Bx [mT]"); Serial.print(","); Serial.print("By [mT]"); Serial.print(",");
+		Serial.print("Bz [mT]"); Serial.print(","); Serial.print("Temp [deg C]"); Serial.print("\r\n");
 
 	// output initial value of TLV493D registers before configuring
 	//Serial.print("00000\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
@@ -213,25 +215,30 @@ void loop() {
 	// reassemble 12-bit two's-complement Bx, By, Bz (-2048 to + 2047) as int's
 	bx = ((int)byte0 << 4) | (byte4 & 0x0F);
 	bx = signExtend(bx);
+	bx_f = (float)bx;
 
 	by = ((int)byte1 << 4) | (byte4 >> 4);
 	by = signExtend(by);
+	by_f = (float)by;
 
 	bz = ((int)byte2 << 4) | (byte5 & 0x0F);
 	bz = signExtend(bz);
+	bz_f = (float)bz;
 
 	// temperature
 	temp_i = ((int)(byte3 & 0xF0) << 4) | byte6;
 	temp_f = ((float)temp_i * 1.1) - (340. * 1.1) + 25.0;
 
 	// output sample data
-	print_vcd(sample, bx, by, bz, temp_f);
+	//print_vcd(sample, bx, by, bz, temp_f);
 	//print_decimal(sample); Serial.print("\t"); print_binary(byte0,8); Serial.print("\t"); print_binary(byte1,8); Serial.print("\t");
 		//print_binary(byte2,8); Serial.print("\t"); print_binary(byte3,8); Serial.print("\t"); print_binary(byte4,8); Serial.print("\t");
 		//print_binary(byte5,8); Serial.print("\t"); print_binary(byte6,8); Serial.print("\t"); print_binary(byte7,8); Serial.print("\t");
 		//print_binary(byte8,8); Serial.print("\t"); print_binary(byte9,8);Serial.println("");
 	//print_decimal(sample); Serial.print("\t"); Serial.print(bx, DEC); Serial.print("\t"); Serial.print(by, DEC); Serial.print("\t");
 		//Serial.print(bz, DEC); Serial.print("\t"); Serial.print(temp_f, 4); Serial.println("");	
+	print_decimal(sample); Serial.print(","); Serial.print(bx_f, 4); Serial.print(","); Serial.print(by_f, 4); Serial.print(",");
+		Serial.print(bz_f, 4); Serial.print(","); Serial.print(temp_f, 4); Serial.print("\r\n");
 
 	delay(250);						// sample and LED blink rate
 }
