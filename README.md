@@ -9,6 +9,8 @@ Getting Started
 1. Arduino UNO R3
 2. Atmel Studio 7 ("AS7"). Arduinologger2 was initially created as an Arduino Sketch, but it has been migrated to an AS7 solution.
 
+2018-09-30 A new project goal is to use Arduino Software only for development. Active development is now being done in the Arduino branch, created from the last commit in the master branch before migrating to Atmel Studio. New functionality in the master branch is being backported to the Arduino branch, and once feature parity is achieved new development and maintainenance will continue in the Arduino branch only. 
+
 Issue Tracking
 --------------
 GitHub project issues.
